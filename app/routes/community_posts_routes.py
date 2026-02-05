@@ -17,9 +17,9 @@ router = APIRouter(
 
 @router.post("/new/{community_id}", status_code=status.HTTP_201_CREATED, response_model=DisplayCommunityPostSchema)
 def upload_new_post_to_community_route(
-    db: Session,
     community_id: str,
     post_body: str,
+    db: Session = Depends(get_db),
     auth_token: str = Depends(oauth2_scheme)
 ):
     
@@ -35,8 +35,8 @@ def upload_new_post_to_community_route(
     
 @router.get("/{community_id}", status_code=status.HTTP_200_OK, response_model=list[DisplayCommunityPostSchema])
 def get_posts_inside_community_route(
-    db: Session,
     community_id: str,
+    db: Session = Depends(get_db),
     auth_token: str = Depends(oauth2_scheme)
 ):
     decoded_token = decode_access_token(auth_token)
