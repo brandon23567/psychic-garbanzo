@@ -25,7 +25,7 @@ def signup_new_user(
         )
         
     salt = bcrypt.gensalt(rounds=12)
-    hashed_password = bcrypt.hashpw(password, salt)
+    hashed_password = bcrypt.hashpw(password.encode("utf-8"), salt)
     
     new_user_profile_image_url = ""
     
@@ -36,11 +36,12 @@ def signup_new_user(
         new_user_instance = UserModel(
             username=username,
             email=email,
-            password=hashed_password,
+            password=hashed_password.decode("utf-8"),
             user_profile_image=new_user_profile_image_url
         )
         
-        db.add()
+        db.add(new_user_instance)
+        db.commit()
         db.refresh(new_user_instance)
         
         user_token_data = {
@@ -65,14 +66,14 @@ def signin_user(
     user_data: UserSigninSchema
 ):
     existing_user = db.execute(select(UserModel).where(UserModel.email == user_data.email)).scalar_one_or_none()
-    if existing_user:
+    if not existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Already have an account, please log in"
         )
         
     try:
-        check_password = bcrypt.checkpw(user_data.password, existing_user.password)
+        check_password = bcrypt.checkpw(user_data.password.encode("utf-8"), existing_user.password.encode("utf-8"))
         if not check_password:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

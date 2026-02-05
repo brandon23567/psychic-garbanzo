@@ -5,6 +5,7 @@ from ..crud.community_crud import *
 from ..routes.user_routes import oauth2_scheme
 from ..database import get_db
 from ..utils.user_utils import *
+from typing import List
 
 router = APIRouter(
     prefix="/community",
@@ -14,7 +15,7 @@ router = APIRouter(
 
 @router.post("/new", status_code=status.HTTP_201_CREATED, response_model=DisplayCommunitySchema)
 def create_new_community_route(
-    db: Session,
+    db: Session = Depends(get_db),
     community_name: str = Form(..., description="name of the new community"),
     community_description: str = Form(None, description="description of community"),
     community_header_image: UploadFile = File(..., description="Header image of the community"),
@@ -33,7 +34,7 @@ def create_new_community_route(
     )
     
 
-@router.get("/", status_code=status.HTTP_200_OK, response_model=list[DisplayCommunitySchema])
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[DisplayCommunitySchema])
 def display_all_communities_route(
     db: Session = Depends(get_db),
     auth_token: str = Depends(oauth2_scheme)
@@ -48,8 +49,8 @@ def display_all_communities_route(
 
 @router.post("/join_community/{community_id}", status_code=status.HTTP_201_CREATED, response_model=DisplayUserJoinedCommunitiesSchema)
 def join_new_community_route(
-    db: Session,
     community_id: str,
+    db: Session = Depends(get_db),
     auth_token: str = Depends(oauth2_scheme)
 ):
     decoded_token = decode_access_token(auth_token)
@@ -62,9 +63,9 @@ def join_new_community_route(
     )
     
 
-@router.get("/joined_communities", status_code=status.HTTP_200_OK, response_model=list[DisplayUserJoinedCommunitiesSchema])
+@router.get("/joined_communities", status_code=status.HTTP_200_OK, response_model=List[DisplayUserJoinedCommunitiesSchema])
 def get_all_user_joined_communities_route(
-    db: Session,
+    db: Session = Depends(get_db),
     auth_token: str = Depends(oauth2_scheme)
 ):
     decoded_token = decode_access_token(auth_token)
@@ -78,8 +79,8 @@ def get_all_user_joined_communities_route(
 
 @router.delete("/leave/{community_id}", status_code=status.HTTP_202_ACCEPTED)
 def leave_community_route(
-    db: Session,
     community_id: str,
+    db: Session = Depends(get_db),
     auth_token: str = Depends(oauth2_scheme)
 ):
     decoded_token = decode_access_token(auth_token)

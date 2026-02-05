@@ -20,7 +20,7 @@ class CommunityModel(Base):
     
 
 class JoinCommunityModel(Base):
-    __tablename__ = "joined_communitites"
+    __tablename__ = "joined_communities"
     
     id = Column(String, primary_key=True, index=True, default=lambda: uuid4().hex)
     associated_user_id = Column(String, ForeignKey("users.id"), nullable=False)

@@ -28,4 +28,11 @@ class DisplayUserSchema(BaseModel):
     class Config:
         from_attributes = True 
         
+
+class UserTokensSchema(BaseModel):
+    access_token: str 
+    refresh_token: str 
+    
+    class Config:
+        from_attributes = True
         

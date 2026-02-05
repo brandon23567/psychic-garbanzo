@@ -6,6 +6,7 @@ from ..utils.community_utils import *
 from ..models.user_models import *
 from ..models.community_models import *
 
+# when user creates community, they should be memeber numer 1
 def create_new_community(
     db: Session,
     associated_user_id: str,
@@ -35,7 +36,19 @@ def create_new_community(
             community_header_image=community_header_image_url
         )
         
-        db.add()
+        db.add(new_community_instance)
+        db.flush()
+        
+        # this is where the user needs to join
+        
+        user_joining_their_community = JoinCommunityModel(
+            associated_user_id=associated_user_id,
+            associated_community_id=new_community_instance.id
+        )
+        
+        db.add(user_joining_their_community)
+        
+        db.commit()
         db.refresh(new_community_instance)
         
         return new_community_instance
@@ -60,6 +73,7 @@ def display_all_communities(
         return communities
         
     except Exception as e:
+        db.rollback()
         print(f"There was an error trying to get communities: {str(e)}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unable to fetch communities")
     
@@ -89,7 +103,8 @@ def join_community(
             associated_community_id=community_id
         )
         
-        db.add()
+        db.add(user_joined_community_instance)
+        db.commit()
         db.refresh(user_joined_community_instance)
         
         return user_joined_community_instance
@@ -112,16 +127,19 @@ def get_all_user_joined_communities(
         )
         
     try:
-        users_joined_communities = db.execute(select(JoinCommunityModel)).scalars().all()
+        users_joined_communities = db.execute(select(JoinCommunityModel).where(
+            JoinCommunityModel.associated_user_id == user_id    
+        )).scalars().all()
         
         if not users_joined_communities:
             return{
                 "communities": []
             }
             
-        users_joined_communities
+        return users_joined_communities
         
     except Exception as e:
+        db.rollback()
         print(f"There was an issue trying to get users joined communities: {str(e)}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unable to get your joined communities")
     
@@ -184,7 +202,8 @@ def delete_a_community(
             CommunityModel.id == community_id,
             CommunityModel.associated_user_id == user_id
         )
-    ))
+    )).scalar_one_or_none()
+    
     if not valid_community:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.post("/new/{community_id}", status_code=status.HTTP_201_CREATED)
+@router.post("/new/{community_id}", status_code=status.HTTP_201_CREATED, response_model=DisplayCommunityPostSchema)
 def upload_new_post_to_community_route(
     db: Session,
     community_id: str,
@@ -33,7 +33,7 @@ def upload_new_post_to_community_route(
         post_body
     )
     
-@router.get("/{community_id}", status_code=status.HTTP_200_OK)
+@router.get("/{community_id}", status_code=status.HTTP_200_OK, response_model=list[DisplayCommunityPostSchema])
 def get_posts_inside_community_route(
     db: Session,
     community_id: str,
@@ -48,7 +48,7 @@ def get_posts_inside_community_route(
         community_id
     )
     
-@router.get("/{community_id}/{post_id}", status_code=status.HTTP_200_OK)
+@router.get("/{community_id}/{post_id}", status_code=status.HTTP_200_OK, response_model=DisplayCommunityPostSchema)
 def community_post_detail_route(
     community_id: str,
     post_id: str,
@@ -76,7 +76,7 @@ def delete_community_post_route(
 # ################################# routes for the comments functionality now begin here ############################################
 
 
-@router.post("/add_comment/{community_id}/{post_id}/new", status_code=status.HTTP_201_CREATED)
+@router.post("/add_comment/{community_id}/{post_id}/new", status_code=status.HTTP_201_CREATED, response_model=DisplayCommunityPostCommentSchema)
 def upload_new_comment_route(
     community_id: str,
     post_id: str,
@@ -90,7 +90,7 @@ def upload_new_comment_route(
     return add_new_comment(db, user_id, post_id, community_id, comment_body)
 
 
-@router.get("/comments/{community_id}/{post_id}", status_code=status.HTTP_200_OK)
+@router.get("/comments/{community_id}/{post_id}", status_code=status.HTTP_200_OK, response_model=list[DisplayCommunityPostCommentSchema])
 def get_all_post_comments_route(
     community_id: str,
     post_id: str,
@@ -103,7 +103,7 @@ def get_all_post_comments_route(
     return view_post_comments(db, user_id, community_id, post_id)
 
 # this is for single comment detail (NB)
-@router.get("/comment/{community_id}/{post_id}/{comment_id}", status_code=status.HTTP_200_OK)
+@router.get("/comment/{community_id}/{post_id}/{comment_id}", status_code=status.HTTP_200_OK, response_model=DisplayCommunityPostCommentSchema)
 def get_comment_detail_route(
     community_id: str,
     post_id: str,
@@ -117,7 +117,7 @@ def get_comment_detail_route(
     return view_comment_detail(db, user_id, post_id, comment_id, community_id)
 
 
-@router.patch("/comment/{community_id}/{post_id}/{comment_id}", status_code=status.HTTP_202_ACCEPTED)
+@router.patch("/comment/{community_id}/{post_id}/{comment_id}", status_code=status.HTTP_202_ACCEPTED, response_model=DisplayCommunityPostCommentSchema)
 def update_comment_route(
     community_id: str,
     post_id: str,
