@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from datetime import datetime
 
@@ -7,8 +7,7 @@ class CreateCommunityPostSchema(BaseModel):
     associated_community_id: str = Field(..., description="id of the community to post to")
     post_body: str = Field(..., description="Actual body of the post we are making")
     
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True)
         
 
 class DisplayCommunityPostSchema(BaseModel):
@@ -17,8 +16,7 @@ class DisplayCommunityPostSchema(BaseModel):
     post_body: str 
     date_posted: datetime
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
         
 
 class CreateCommunityPostCommentSchema(BaseModel):
@@ -26,8 +24,7 @@ class CreateCommunityPostCommentSchema(BaseModel):
     associated_post_id: str = Field(..., description="id of the post we are commenting on")
     comment_body: str = Field(..., description="Actual comment body")
     
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True)
         
 
 class DisplayCommunityPostCommentSchema(BaseModel):
@@ -37,5 +34,4 @@ class DisplayCommunityPostCommentSchema(BaseModel):
     associated_post_id: str 
     comment_body: str 
     
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True)

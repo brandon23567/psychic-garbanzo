@@ -13,16 +13,16 @@ CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY")
 CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET")
 CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")
 
-JWT_ALGORTIHM = os.getenv("JWT_ALGORITHM")
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
 JWT_SECRET = os.getenv("JWT_SECRET_KEY")
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 15
 REFRESH_TOKEN_EXIRE_DAYS = 7
 
 cloudinary.config(
-    cloud_name = "",
-    api_key = "",
-    api_secret = ""
+    cloud_name = CLOUDINARY_CLOUD_NAME,
+    api_key = CLOUDINARY_API_KEY,
+    api_secret = CLOUDINARY_API_SECRET
 )
 
 def upload_image_to_cloudinary(
@@ -38,10 +38,7 @@ def upload_image_to_cloudinary(
         
         user_image_link = result["secure_url"]
         
-        return {
-            "message": "Image was uploaded",
-            "image_url": user_image_link
-        }
+        return user_image_link
         
     except Exception as e:
         print(f"There was an error trying to upload the file: {str(e)}")
@@ -53,8 +50,8 @@ def generate_access_token(user_data: dict) -> str:
     try:
         access_token_data = user_data.copy()
         expires_in = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token_data.update({ "exp_in": expires_in, "type": "access" })
-        access_token = jwt.encode(access_token_data, JWT_SECRET, algorithm=JWT_ALGORTIHM)
+        access_token_data.update({ "exp": expires_in, "type": "access" })
+        access_token = jwt.encode(access_token_data, JWT_SECRET, algorithm=JWT_ALGORITHM)
         
         return access_token
         
@@ -67,8 +64,8 @@ def generate_refresh_token(user_data: dict) -> str:
     try:
         refresh_token_data = user_data.copy()
         expires_in = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXIRE_DAYS)
-        refresh_token_data.update({ "exp_in": expires_in, "type": "refresh" })
-        refresh_token = jwt.encode(refresh_token_data, JWT_SECRET, algorithm=JWT_ALGORTIHM)
+        refresh_token_data.update({ "exp": expires_in, "type": "refresh" })
+        refresh_token = jwt.encode(refresh_token_data, JWT_SECRET, algorithm=JWT_ALGORITHM)
         
         return refresh_token
         
@@ -95,7 +92,7 @@ def generate_user_tokens(user_data: dict) -> dict:
 
 def decode_access_token(access_token: str) -> dict:
     try:
-        decoded_token = jwt.decode(access_token, JWT_SECRET, algorithms=[JWT_ALGORTIHM])
+        decoded_token = jwt.decode(access_token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         if not decoded_token:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

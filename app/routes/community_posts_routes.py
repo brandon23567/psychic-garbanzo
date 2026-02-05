@@ -8,6 +8,7 @@ from ..models.user_models import *
 from ..schemas.community_posts_schemas import *
 from ..crud.community_posts_crud import *
 from ..utils.user_utils import *
+from typing import List
 
 router = APIRouter(
     prefix="/app",
@@ -33,7 +34,7 @@ def upload_new_post_to_community_route(
         post_body
     )
     
-@router.get("/{community_id}", status_code=status.HTTP_200_OK, response_model=list[DisplayCommunityPostSchema])
+@router.get("/{community_id}", status_code=status.HTTP_200_OK, response_model=List[DisplayCommunityPostSchema])
 def get_posts_inside_community_route(
     community_id: str,
     db: Session = Depends(get_db),
@@ -60,7 +61,7 @@ def community_post_detail_route(
     
     return community_post_detail(db, community_id, user_id, post_id)
 
-@router.delete("/{community_id}/{post_id}")
+@router.delete("/{community_id}/{post_id}", status_code=status.HTTP_200_OK)
 def delete_community_post_route(
     community_id: str,
     post_id: str,
@@ -90,7 +91,7 @@ def upload_new_comment_route(
     return add_new_comment(db, user_id, post_id, community_id, comment_body)
 
 
-@router.get("/comments/{community_id}/{post_id}", status_code=status.HTTP_200_OK, response_model=list[DisplayCommunityPostCommentSchema])
+@router.get("/comments/{community_id}/{post_id}", status_code=status.HTTP_200_OK, response_model=List[DisplayCommunityPostCommentSchema])
 def get_all_post_comments_route(
     community_id: str,
     post_id: str,
@@ -132,7 +133,7 @@ def update_comment_route(
     return update_comment(db, comment_id, user_id, post_id, community_id, comment_body)
 
 
-@router.delete("/comment/{community_id}/{post_id}/{comment_id}")
+@router.delete("/comment/{community_id}/{post_id}/{comment_id}", status_code=status.HTTP_200_OK)
 def delete_user_comment_route(
     community_id: str,
     post_id: str,

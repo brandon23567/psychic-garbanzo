@@ -39,8 +39,6 @@ def create_new_community(
         db.add(new_community_instance)
         db.flush()
         
-        # this is where the user needs to join
-        
         user_joining_their_community = JoinCommunityModel(
             associated_user_id=associated_user_id,
             associated_community_id=new_community_instance.id
@@ -63,14 +61,9 @@ def display_all_communities(
     db: Session
 ):
     try:
-        communities = db.execute(select(CommunityModel)).scalars().all()
-        
-        if not communities:
-            return {
-                "communities": []
-            }
+        # communities = db.execute(select(CommunityModel)).scalars().all()
             
-        return communities
+        return db.execute(select(CommunityModel)).scalars().all()
         
     except Exception as e:
         db.rollback()
@@ -132,9 +125,7 @@ def get_all_user_joined_communities(
         )).scalars().all()
         
         if not users_joined_communities:
-            return{
-                "communities": []
-            }
+            return []
             
         return users_joined_communities
         

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from typing import Optional
 from datetime import datetime
 
@@ -9,15 +9,13 @@ class CreateUserSchema(BaseModel):
     user_profile_image: Optional[str] = Field(None, description="profile image if provided")
     password: str = Field(..., description="user password")
     
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True)
   
 class UserSigninSchema(BaseModel):
     email: EmailStr = Field(..., description="users email to signin")
     password: str = Field(..., description="users password to signin")
     
-    class Config:
-        from_attributes = True      
+    model_config = ConfigDict(from_attributes=True)     
         
 class DisplayUserSchema(BaseModel):
     id: str 
@@ -25,14 +23,12 @@ class DisplayUserSchema(BaseModel):
     user_profile_image: Optional[str]
     date_created: datetime
     
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True)
         
 
 class UserTokensSchema(BaseModel):
     access_token: str 
     refresh_token: str 
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
         

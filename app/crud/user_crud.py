@@ -96,3 +96,7 @@ def signin_user(
             detail="Unable to signin to your account"
         )
         
+
+def get_user_by_id(db: Session, user_id: str):
+    user = db.execute(select(UserModel).where(UserModel.id == user_id)).scalar_one_or_none()
+    return user

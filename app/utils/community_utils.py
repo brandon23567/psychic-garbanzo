@@ -14,9 +14,9 @@ CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET")
 CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")
 
 cloudinary.config(
-    cloud_name = "",
-    api_key = "",
-    api_secret = ""
+    cloud_name = CLOUDINARY_CLOUD_NAME,
+    api_key = CLOUDINARY_API_KEY,
+    api_secret = CLOUDINARY_API_SECRET
 )
 
 def upload_image_to_cloudinary(
@@ -32,10 +32,7 @@ def upload_image_to_cloudinary(
         
         user_image_link = result["secure_url"]
         
-        return {
-            "message": "Image was uploaded",
-            "image_url": user_image_link
-        }
+        return user_image_link
         
     except Exception as e:
         print(f"There was an error trying to upload the file: {str(e)}")

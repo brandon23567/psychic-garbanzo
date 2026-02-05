@@ -25,7 +25,7 @@ class CommunityPostCommentModel(Base):
     id = Column(String, primary_key=True, index=True, default=lambda: uuid4().hex)
     associated_user_id = Column(String, ForeignKey("users.id"), nullable=False)
     associated_community_id = Column(String, ForeignKey("communities.id"), nullable=False)
-    associated_post_id = Column(String, ForeignKey("community_posts.id"), nullable=False)
+    associated_post_id = Column(String, ForeignKey("posts.id"), nullable=False)
     comment_body = Column(Text, nullable=False)
     date_posted = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     

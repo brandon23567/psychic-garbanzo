@@ -43,6 +43,14 @@ def signin_user_route(
 
 @router.get("/", status_code=status.HTTP_200_OK, response_model=DisplayUserSchema)
 def get_current_user_route(
+    db: Session = Depends(get_db),
     auth_token: str = Depends(oauth2_scheme)
 ):
-    return get_current_user(auth_token)
+    decoded_token = decode_access_token(auth_token)
+    user_id = decoded_token.get("sub")
+    
+    current_user = get_user_by_id(db, user_id)
+    if not current_user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    return current_user

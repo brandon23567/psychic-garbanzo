@@ -41,7 +41,8 @@ def upload_new_post_to_community(
             post_body=post_body
         )
         
-        db.add()
+        db.add(new_post)
+        db.commit()
         db.refresh(new_post)
         
         
@@ -141,6 +142,8 @@ def community_post_detail(
             
         return community_post
         
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"There was an error trying to get the post detail: {str(e)}")
         raise HTTPException(
@@ -197,6 +200,8 @@ def delete_community_post(
             "message": "post has been deleted"
         }
         
+    except HTTPException:
+        raise
     except Exception as e:
         db.rollback()
         print(f"There was an issue trying to delete the post: {str(e)}")
@@ -346,6 +351,8 @@ def view_comment_detail(
             
         return comment_instance
         
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Unable to get details of comment: {str(e)}")
         raise HTTPException(
@@ -404,6 +411,8 @@ def update_comment(
         
         return comment_instance
         
+    except HTTPException:
+        raise
     except Exception as e:
         db.rollback()
         print(f"Unable to update the comment: {str(e)}")
@@ -463,10 +472,12 @@ def delete_user_comment(
             "message": "Comment has been deleted"
         }
         
+    except HTTPException:
+        raise
     except Exception as e:
         db.rollback()
-        print(f"Unable to update the comment: {str(e)}")
+        print(f"Unable to delete the comment: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Unable to update comment"
+            detail="Unable to delete comment"
         )
