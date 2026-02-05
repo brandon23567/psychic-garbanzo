@@ -16,9 +16,12 @@ class CommunityModel(Base):
     date_created = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     
     user = relationship("UserModel", back_populates="communities")
+    posts = relationship("CommunityPostModel", back_populates="community")
     
 
 class JoinCommunityModel(Base):
+    __tablename__ = "joined_communitites"
+    
     id = Column(String, primary_key=True, index=True, default=lambda: uuid4().hex)
     associated_user_id = Column(String, ForeignKey("users.id"), nullable=False)
     associated_community_id = Column(String, ForeignKey("communities.id"), nullable=False)
