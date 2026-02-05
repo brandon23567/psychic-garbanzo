@@ -14,3 +14,6 @@ class UserModel(Base):
     user_profile_image = Column(String, nullable=True)
     password = Column(String, nullable=False)
     date_created = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    communities = relationship("CommunityModel", back_populates="user")
+    joined_communities = relationship("JoinCommunityModel", back_populates="user")
