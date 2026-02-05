@@ -419,7 +419,6 @@ def delete_user_comment(
     user_id: str,
     post_id: str,
     community_id: str, 
-    comment_body: str
 ):
     existing_user = db.execute(select(UserModel).where(UserModel.id == user_id)).scalar_one_or_none()
     if not existing_user:
