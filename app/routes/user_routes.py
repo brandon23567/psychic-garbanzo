@@ -13,7 +13,7 @@ router = APIRouter(
     tags=["Authentication endpoints"]
 )
 
-@router.post("/signin", status_code=status.HTTP_201_CREATED)
+@router.post("/signin", status_code=status.HTTP_201_CREATED, response_model=DisplayUserSchema)
 def signup_new_user_route(
     db: Session = Depends(get_db),
     username: str = Form(..., description="username"),
@@ -30,7 +30,7 @@ def signup_new_user_route(
     )
     
 
-@router.post("/signin", status_code=status.HTTP_200_OK)
+@router.post("/signin", status_code=status.HTTP_200_OK, response_model=DisplayUserSchema)
 def signin_user_route(
     db: Session,
     user_data: UserSigninSchema
@@ -41,7 +41,7 @@ def signin_user_route(
     )
     
 
-@router.get("/", status_code=status.HTTP_200_OK)
+@router.get("/", status_code=status.HTTP_200_OK, response_model=DisplayUserSchema)
 def get_current_user_route(
     auth_token: str = Depends(oauth2_scheme)
 ):

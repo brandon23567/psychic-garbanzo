@@ -43,7 +43,14 @@ def signup_new_user(
         db.add()
         db.refresh(new_user_instance)
         
-        return new_user_instance
+        user_token_data = {
+            "sub": new_user_instance.id,
+            "username": new_user_instance.username
+        }
+        
+        user_tokens = generate_user_tokens(user_token_data)
+            
+        return user_tokens
         
     except Exception as e:
         print(f"There was an error trying to signup the new user: {str(e)}")
@@ -72,7 +79,14 @@ def signin_user(
                 detail="Invalid credentials used for login"
             )
             
-        return existing_user
+        user_token_data = {
+            "sub": existing_user.id,
+            "username": existing_user.username
+        }
+        
+        user_tokens = generate_user_tokens(user_token_data)
+            
+        return user_tokens
         
     except Exception as e:
         print(f"There was an error trying to signin the user: {str(e)}")
