@@ -18,7 +18,7 @@ JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
 JWT_SECRET = os.getenv("JWT_SECRET_KEY")
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 15
-REFRESH_TOKEN_EXIRE_DAYS = 7
+REFRESH_TOKEN_EXIRE_DAYS = 30
 
 cloudinary.config(
     cloud_name = CLOUDINARY_CLOUD_NAME,
@@ -158,3 +158,14 @@ def get_current_user(access_token: str) -> dict:
     except Exception as e:
         print(f"There was an error trying to get the current user: {str(e)}")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authorized")
+
+from fastapi import Request
+
+def get_token_from_cookie(request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated"
+        )
+    return token

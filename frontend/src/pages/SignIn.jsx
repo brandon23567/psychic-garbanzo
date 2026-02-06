@@ -19,9 +19,8 @@ export default function SignIn() {
             // Sending as JSON as per UserSigninSchema
             return api.post('/auth/signin', data);
         },
-        onSuccess: (response) => {
-            const { access_token, refresh_token, ...userData } = response.data;
-            login(access_token, refresh_token, userData);
+        onSuccess: async (response) => {
+            await login(); // Cookies are set by backend, just refresh user state
             navigate('/dashboard');
         },
         onError: (err) => {

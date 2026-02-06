@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from ..database import get_db
-from ..routes.user_routes import oauth2_scheme
+from ..database import get_db
 from ..models.community_models import *
 from ..models.community_post_models import *
 from ..models.user_models import *
@@ -21,7 +21,7 @@ def upload_new_post_to_community_route(
     community_id: str,
     post_body: str,
     db: Session = Depends(get_db),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     
     decoded_token = decode_access_token(auth_token)
@@ -38,7 +38,7 @@ def upload_new_post_to_community_route(
 def get_posts_inside_community_route(
     community_id: str,
     db: Session = Depends(get_db),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     decoded_token = decode_access_token(auth_token)
     user_id = decoded_token.get("sub")
@@ -54,7 +54,7 @@ def community_post_detail_route(
     community_id: str,
     post_id: str,
     db: Session = Depends(get_db),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     decoded_token = decode_access_token(auth_token)
     user_id = decoded_token.get("sub")
@@ -66,7 +66,7 @@ def delete_community_post_route(
     community_id: str,
     post_id: str,
     db: Session = Depends(get_db),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     decoded_token = decode_access_token(auth_token)
     user_id = decoded_token.get("sub")
@@ -83,7 +83,7 @@ def upload_new_comment_route(
     post_id: str,
     comment_body: str,
     db: Session = Depends(get_db),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     decoded_token = decode_access_token(auth_token)
     user_id = decoded_token.get("sub")
@@ -96,7 +96,7 @@ def get_all_post_comments_route(
     community_id: str,
     post_id: str,
     db: Session = Depends(get_db),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     decoded_token = decode_access_token(auth_token)
     user_id = decoded_token.get("sub")
@@ -110,7 +110,7 @@ def get_comment_detail_route(
     post_id: str,
     comment_id: str,
     db: Session = Depends(get_db),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     decoded_token = decode_access_token(auth_token)
     user_id = decoded_token.get("sub")
@@ -125,7 +125,7 @@ def update_comment_route(
     comment_id: str,
     comment_body: str,
     db: Session = Depends(get_db),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     decoded_token = decode_access_token(auth_token)
     user_id = decoded_token.get("sub")
@@ -139,7 +139,7 @@ def delete_user_comment_route(
     post_id: str,
     comment_id: str,
     db: Session = Depends(get_db),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     decoded_token = decode_access_token(auth_token)
     user_id = decoded_token.get("sub")

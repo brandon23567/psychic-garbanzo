@@ -5,52 +5,43 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (token) {
-            // Decode user from token or fetch profile
-            // For now, we'll try to fetch the current user profile from backend
-            fetchUser();
-        } else {
-            setLoading(false);
-        }
-    }, [token]);
+        fetchUser();
+    }, []);
 
     const fetchUser = async () => {
         try {
             const { data } = await api.get('/auth/');
             setUser(data);
         } catch (error) {
-            console.error("Failed to fetch user", error);
-            logout();
+            // If 401, it means not authenticated, which is fine
+            console.log("No active session or failed to fetch user");
+            setUser(null);
         } finally {
             setLoading(false);
         }
     };
 
-    const login = (accessToken, refreshToken, userData) => {
-        localStorage.setItem('token', accessToken);
-        localStorage.setItem('refresh_token', refreshToken);
-        setToken(accessToken);
-        // If userData provided, set it, otherwise fetch it
-        if (userData) {
-            setUser(userData);
-        } else {
-            fetchUser();
+    const login = async () => {
+        // Just fetch user, as login endpoint sets cookies
+        await fetchUser();
+    };
+
+    const logout = async () => {
+        try {
+            await api.post('/auth/logout');
+            setUser(null);
+        } catch (error) {
+            console.error("Logout failed", error);
+            // Force logout client-side anyway
+            setUser(null);
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('refresh_token');
-        setToken(null);
-        setUser(null);
-    };
-
     return (
-        <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );

@@ -30,10 +30,8 @@ export default function SignUp() {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
         },
-        onSuccess: (response) => {
-            // After signup, we get the user data and tokens
-            const { access_token, refresh_token, ...userData } = response.data;
-            login(access_token, refresh_token, userData);
+        onSuccess: async (response) => {
+            await login();
             navigate('/dashboard');
         },
         onError: (err) => {

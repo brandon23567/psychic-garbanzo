@@ -1,18 +1,35 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8000',
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
+    withCredentials: true,
 });
 
-api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
+api.interceptors.response.use(
+    (response) => {
+        return response;
     },
-    (error) => {
+    async (error) => {
+        const originalRequest = error.config;
+
+        // If error is 401 and we haven't retried yet
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+
+            try {
+                // Attempt to refresh token
+                await api.post('/auth/refresh');
+
+                // Retry original request
+                return api(originalRequest);
+            } catch (refreshError) {
+                // If refresh fails, redirect to login
+                console.error("Token refresh failed:", refreshError);
+                window.location.href = '/signin';
+                return Promise.reject(refreshError);
+            }
+        }
+
         return Promise.reject(error);
     }
 );

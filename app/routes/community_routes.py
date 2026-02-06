@@ -2,7 +2,7 @@ from fastapi import FastAPI, APIRouter, HTTPException, Depends, UploadFile, File
 from ..models.community_models import *
 from ..schemas.community_schemas import *
 from ..crud.community_crud import *
-from ..routes.user_routes import oauth2_scheme
+from ..crud.community_crud import *
 from ..database import get_db
 from ..utils.user_utils import *
 from typing import List
@@ -19,7 +19,7 @@ def create_new_community_route(
     community_name: str = Form(..., description="name of the new community"),
     community_description: str = Form(None, description="description of community"),
     community_header_image: UploadFile = File(..., description="Header image of the community"),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     
     decoded_token = decode_access_token(auth_token)
@@ -37,7 +37,7 @@ def create_new_community_route(
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[DisplayCommunitySchema])
 def display_all_communities_route(
     db: Session = Depends(get_db),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     if not auth_token:
         raise HTTPException(
@@ -51,7 +51,7 @@ def display_all_communities_route(
 def join_new_community_route(
     community_id: str,
     db: Session = Depends(get_db),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     decoded_token = decode_access_token(auth_token)
     user_id = decoded_token.get("sub")
@@ -66,7 +66,7 @@ def join_new_community_route(
 @router.get("/joined_communities", status_code=status.HTTP_200_OK, response_model=List[DisplayUserJoinedCommunitiesSchema])
 def get_all_user_joined_communities_route(
     db: Session = Depends(get_db),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     decoded_token = decode_access_token(auth_token)
     user_id = decoded_token.get("sub")
@@ -81,7 +81,7 @@ def get_all_user_joined_communities_route(
 def leave_community_route(
     community_id: str,
     db: Session = Depends(get_db),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     decoded_token = decode_access_token(auth_token)
     user_id = decoded_token.get("sub")
@@ -97,7 +97,7 @@ def leave_community_route(
 def delete_community_route(
     community_id: str,
     db: Session = Depends(get_db),
-    auth_token: str = Depends(oauth2_scheme)
+    auth_token: str = Depends(get_token_from_cookie)
 ):
     decoded_token = decode_access_token(auth_token)
     user_id = decoded_token.get("sub")

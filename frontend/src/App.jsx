@@ -14,9 +14,9 @@ import CommunityDetails from './pages/CommunityDetails';
 const queryClient = new QueryClient();
 
 const ProtectedRoute = () => {
-  const { token, loading } = useAuth();
+  const { user, loading } = useAuth();
   if (loading) return <div>Loading...</div>;
-  return token ? <Outlet /> : <Navigate to="/signin" />;
+  return user ? <Outlet /> : <Navigate to="/signin" />;
 };
 
 const Layout = () => (
