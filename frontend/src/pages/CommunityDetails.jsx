@@ -72,6 +72,10 @@ export default function CommunityDetails() {
         onSuccess: () => {
             setNewPostContent('');
             queryClient.invalidateQueries(['posts', communityId]);
+        },
+        onError: (err) => {
+            console.error("Failed to create post", err);
+            alert("Failed to create post: " + (err.response?.data?.detail || err.message));
         }
     });
     // Note: the post endpoint takes query param `post_body` or body? 
@@ -207,6 +211,9 @@ function PostCard({ post, communityId, currentUser, onDelete, activeCommentPostI
         onSuccess: () => {
             setCommentBody('');
             queryClient.invalidateQueries(['comments', post.id]);
+        },
+        onError: (err) => {
+            alert("Failed to add comment: " + (err.response?.data?.detail || err.message));
         }
     });
 
@@ -223,12 +230,15 @@ function PostCard({ post, communityId, currentUser, onDelete, activeCommentPostI
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 transition-all hover:border-gray-700">
             <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                        {/* Avatar placeholder or user image if we had it in post schema */}
-                        U
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold overflow-hidden">
+                        {post.user_profile_image ? (
+                            <img src={post.user_profile_image} alt={post.username} className="w-full h-full object-cover" />
+                        ) : (
+                            "U"
+                        )}
                     </div>
                     <div>
-                        <div className="font-semibold text-white">User {post.associated_user_id.slice(0, 6)}</div>
+                        <div className="font-semibold text-white">{post.username}</div>
                         <div className="text-xs text-gray-500">{new Date(post.date_posted).toLocaleString()}</div>
                     </div>
                 </div>
@@ -284,7 +294,7 @@ function PostCard({ post, communityId, currentUser, onDelete, activeCommentPostI
                             comments?.map(comment => (
                                 <div key={comment.id} className="bg-gray-800/50 rounded-lg p-3 flex justify-between group">
                                     <div>
-                                        <div className="text-xs text-blue-400 mb-1">User {comment.associated_user_id.slice(0, 6)}</div>
+                                        <div className="text-xs text-blue-400 mb-1">{comment.username}</div>
                                         <p className="text-sm text-gray-200">{comment.comment_body}</p>
                                     </div>
                                     {comment.associated_user_id === currentUser?.id && (

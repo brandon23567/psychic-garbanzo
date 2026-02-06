@@ -1,6 +1,7 @@
 import os 
 import cloudinary
 import cloudinary.api
+import cloudinary.uploader
 from dotenv import load_dotenv
 from fastapi import HTTPException, status, File, Form, UploadFile
 import json 

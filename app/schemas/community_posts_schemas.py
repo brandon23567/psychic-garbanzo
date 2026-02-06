@@ -11,7 +11,10 @@ class CreateCommunityPostSchema(BaseModel):
         
 
 class DisplayCommunityPostSchema(BaseModel):
-    id: str 
+    id: str
+    username: str
+    user_profile_image: Optional[str] = None
+    associated_user_id: str
     associated_community_id: str 
     post_body: str 
     date_posted: datetime
@@ -29,6 +32,8 @@ class CreateCommunityPostCommentSchema(BaseModel):
 
 class DisplayCommunityPostCommentSchema(BaseModel):
     id: str 
+    username: str
+    user_profile_image: Optional[str] = None
     associated_user_id: str
     associated_community_id: str 
     associated_post_id: str 

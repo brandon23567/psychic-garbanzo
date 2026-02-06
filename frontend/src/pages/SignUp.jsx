@@ -26,7 +26,7 @@ export default function SignUp() {
             if (data.user_profile_image) {
                 formDataToSend.append('user_profile_image', data.user_profile_image);
             }
-            return api.post('/auth/new', formDataToSend, {
+            return api.post('/auth/signup', formDataToSend, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
         },

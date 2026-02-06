@@ -18,6 +18,14 @@ class CommunityPostModel(Base):
     community = relationship("CommunityModel", back_populates="posts")
     post_comments = relationship("CommunityPostCommentModel", back_populates="community_post")
     
+    @property
+    def username(self):
+        return self.user.username if self.user else "Unknown"
+
+    @property
+    def user_profile_image(self):
+        return self.user.user_profile_image if self.user else None
+    
     
 class CommunityPostCommentModel(Base):
     __tablename__ = "post_comments"
@@ -31,3 +39,11 @@ class CommunityPostCommentModel(Base):
     
     user = relationship("UserModel", back_populates="post_comments")
     community_post = relationship("CommunityPostModel", back_populates="post_comments")
+
+    @property
+    def username(self):
+        return self.user.username if self.user else "Unknown"
+        
+    @property
+    def user_profile_image(self):
+        return self.user.user_profile_image if self.user else None
