@@ -55,7 +55,7 @@ def signup_new_user_route(
         httponly=True,
         max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         expires=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-        samesite="lax",
+        samesite="None" if IS_PRODUCTION else "lax",
         secure=IS_PRODUCTION 
     )
     
@@ -65,7 +65,7 @@ def signup_new_user_route(
         httponly=True,
         max_age=REFRESH_TOKEN_EXIRE_DAYS * 24 * 60 * 60,
         expires=REFRESH_TOKEN_EXIRE_DAYS * 24 * 60 * 60,
-        samesite="lax",
+        samesite="None" if IS_PRODUCTION else "lax",
         secure=IS_PRODUCTION 
     )
     
@@ -90,7 +90,7 @@ def signin_user_route(
         httponly=True,
         max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60, 
         expires=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-        samesite="lax",
+        samesite="none" if IS_PRODUCTION else "lax",
         secure=IS_PRODUCTION
     )
     
@@ -100,7 +100,7 @@ def signin_user_route(
         httponly=True,
         max_age=REFRESH_TOKEN_EXIRE_DAYS * 24 * 60 * 60,
         expires=REFRESH_TOKEN_EXIRE_DAYS * 24 * 60 * 60,
-        samesite="lax",
+        samesite="none" if IS_PRODUCTION else "lax",
         secure=IS_PRODUCTION
     )
     
@@ -132,7 +132,7 @@ def refresh_token_route(request: Request, response: Response):
             httponly=True,
             max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60, 
             expires=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-            samesite="lax",
+            samesite="none" if IS_PRODUCTION else "lax",
             secure=IS_PRODUCTION
         )
         
@@ -142,7 +142,7 @@ def refresh_token_route(request: Request, response: Response):
             httponly=True,
             max_age=REFRESH_TOKEN_EXIRE_DAYS * 24 * 60 * 60,
             expires=REFRESH_TOKEN_EXIRE_DAYS * 24 * 60 * 60,
-            samesite="lax",
+            samesite="none" if IS_PRODUCTION else "lax",
             secure=IS_PRODUCTION
         )
         
